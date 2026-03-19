@@ -27,6 +27,12 @@ elseif (strpos($url, 'programme/') === 0) {
     $controller = new ProgrammeController();
     $controller->show($id);
 }
+elseif ($url == 'interest') {
+    echo "<!-- DEBUG: Loading interest route -->";
+    require_once 'controllers/InterestController.php';
+    $controller = new InterestController();
+    $controller->store();
+}
 else {
     echo "<!-- DEBUG: 404 route -->";
     ob_start();
