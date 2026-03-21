@@ -106,7 +106,23 @@ elseif (strpos($url, 'admin/') === 0) {
         $controller = new AdminController();
         $controller->module_delete();
     }
-    // ========== END MODULE MANAGEMENT ==========
+    // ========== INTERESTED STUDENTS ROUTES ==========
+    elseif($admin_page == 'interests') {
+        require_once 'controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->interests();
+    }
+    elseif($admin_page == 'interest_delete') {
+        require_once 'controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->interest_delete();
+    }
+    elseif($admin_page == 'export_csv') {
+        require_once 'controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->export_csv();
+    }
+    // ========== END ADMIN ROUTES ==========
     else {
         echo "Admin page not found: " . $admin_page;
     }
@@ -126,4 +142,3 @@ else {
     $content = ob_get_clean();
     require 'views/layout.php';
 }
-?>
