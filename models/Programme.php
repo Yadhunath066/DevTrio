@@ -11,12 +11,11 @@ class Programme {
         $this->db = DBConnection::getInstance()->getConnection();
     }
     
-    // Get all published programmes from database
+    // Get all programmes
     public function getAll() {
         $sql = "SELECT p.*, l.LevelName 
                 FROM Programmes p
-                JOIN Levels l ON p.LevelID = l.LevelID
-                WHERE p.published = 1";
+                JOIN Levels l ON p.LevelID = l.LevelID";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll();
     }
@@ -32,11 +31,11 @@ class Programme {
                 LEFT JOIN ProgrammeModules pm ON p.ProgrammeID = pm.ProgrammeID
                 LEFT JOIN Modules m ON pm.ModuleID = m.ModuleID
                 LEFT JOIN Staff s ON m.ModuleLeaderID = s.StaffID
-                WHERE p.ProgrammeID = :id AND p.published = 1
+                WHERE p.ProgrammeID = ?
                 ORDER BY pm.Year, m.ModuleName";
         
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([':id' => $id]);
+        $stmt->execute([$id]);
         $results = $stmt->fetchAll();
         
         if(empty($results)) {
@@ -66,28 +65,28 @@ class Programme {
         return $programme;
     }
     
-    // Search programmes
+    // Search programmes - SIMPLIFIED
     public function search($keyword) {
+        $searchTerm = "%$keyword%";
         $sql = "SELECT p.*, l.LevelName 
                 FROM Programmes p
                 JOIN Levels l ON p.LevelID = l.LevelID
-                WHERE p.published = 1 
-                AND (p.ProgrammeName LIKE :keyword OR p.Description LIKE :keyword)";
+                WHERE p.ProgrammeName LIKE ? OR p.Description LIKE ?";
         
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([':keyword' => '%' . $keyword . '%']);
+        $stmt->execute([$searchTerm, $searchTerm]);
         return $stmt->fetchAll();
     }
     
-    // Filter by level
+    // Filter by level - SIMPLIFIED
     public function getByLevel($level) {
         $sql = "SELECT p.*, l.LevelName 
                 FROM Programmes p
                 JOIN Levels l ON p.LevelID = l.LevelID
-                WHERE p.published = 1 AND l.LevelName = :level";
+                WHERE l.LevelName = ?";
         
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([':level' => $level]);
+        $stmt->execute([$level]);
         return $stmt->fetchAll();
     }
 }
