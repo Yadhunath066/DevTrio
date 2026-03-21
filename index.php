@@ -3,6 +3,9 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// Start session for admin login
+session_start();
+
 // Simple routing
 $url = isset($_GET['url']) ? $_GET['url'] : 'home';
 
@@ -12,13 +15,13 @@ if ($url == 'home') {
     echo "<!-- DEBUG: Loading home route -->";
     require_once 'controllers/ProgrammeController.php';
     $controller = new ProgrammeController();
-    $controller->home();  // CHANGED: now calls home() method
+    $controller->home();
 } 
 elseif ($url == 'programmes') {
     echo "<!-- DEBUG: Loading programmes route -->";
     require_once 'controllers/ProgrammeController.php';
     $controller = new ProgrammeController();
-    $controller->programmes();  // CHANGED: now calls programmes() method
+    $controller->programmes();
 }
 elseif (strpos($url, 'programme/') === 0) {
     echo "<!-- DEBUG: Loading programme detail route with ID: " . $url . " -->";
@@ -27,6 +30,42 @@ elseif (strpos($url, 'programme/') === 0) {
     $controller = new ProgrammeController();
     $controller->show($id);
 }
+// ========== NEW ADMIN ROUTES ==========
+elseif ($url == 'login') {
+    echo "<!-- DEBUG: Loading login route -->";
+    require_once 'controllers/AuthController.php';
+    $controller = new AuthController();
+    $controller->login();
+}
+elseif ($url == 'authenticate') {
+    echo "<!-- DEBUG: Processing authenticate route -->";
+    require_once 'controllers/AuthController.php';
+    $controller = new AuthController();
+    $controller->authenticate();
+}
+elseif ($url == 'logout') {
+    echo "<!-- DEBUG: Processing logout route -->";
+    require_once 'controllers/AuthController.php';
+    $controller = new AuthController();
+    $controller->logout();
+}
+elseif (strpos($url, 'admin/') === 0) {
+    echo "<!-- DEBUG: Loading admin route: " . $url . " -->";
+    // Check if logged in
+    if(!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+        header('Location: index.php?url=login');
+        exit;
+    }
+    
+    $admin_page = str_replace('admin/', '', $url);
+    
+    if($admin_page == 'dashboard') {
+        require_once 'controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->dashboard();
+    }
+}
+// ========== END ADMIN ROUTES ==========
 else {
     echo "<!-- DEBUG: 404 route -->";
     ob_start();

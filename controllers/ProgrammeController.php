@@ -54,7 +54,13 @@ class ProgrammeController {
     
     // Show all programmes (homepage)
     public function programmes() {
-        $programmes = $this->programmeModel->getAll();
+        if(isset($_GET['search']) && !empty($_GET['search'])){
+    $keyword = $_GET['search'];
+    $programmes = $this->programmeModel->search($keyword);
+} else {
+    $programmes = $this->programmeModel->getAll();
+}
+        
         
         // Separate by level
         $undergraduate = [];
@@ -73,6 +79,11 @@ class ProgrammeController {
         ?>
         
         <div class="programme-section">
+            <form method="GET" action="index.php">
+              <input type="hidden" name="url" value="programmes">
+              <input type="text" name="search" placeholder="Search programmes">
+              <button type="submit">Search</button>
+            </form>
             <h2>Undergraduate Programmes</h2>
             <div class="programme-grid">
                 <?php if(empty($undergraduate)): ?>
