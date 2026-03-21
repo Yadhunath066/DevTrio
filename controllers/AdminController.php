@@ -564,5 +564,115 @@ class AdminController {
         header('Location: index.php?url=admin/modules');
         exit;
     }
+    
+    // ========== INTERESTED STUDENTS MANAGEMENT ==========
+    
+    public function interests() {
+        $sql = "SELECT i.*, p.ProgrammeName 
+                FROM InterestedStudents i
+                JOIN Programmes p ON i.ProgrammeID = p.ProgrammeID
+                ORDER BY i.RegisteredAt DESC";
+        $students = $this->db->query($sql)->fetchAll();
+        
+        ob_start();
+        ?>
+        
+        <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1 style="color: #2d3748;">Interested Students</h1>
+                <div>
+                    <a href="index.php?url=admin/export_csv" style="background: #48bb78; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-right: 10px;">📥 Export to CSV</a>
+                    <a href="index.php?url=admin/dashboard" style="background: #a0aec0; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">← Back</a>
+                </div>
+            </div>
+            
+            <?php if(isset($_SESSION['success'])): ?>
+                <div style="background: #c6f6d5; color: #22543d; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+                    <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+                </div>
+            <?php endif; ?>
+            
+            <?php if(empty($students)): ?>
+                <div style="text-align: center; padding: 50px;">
+                    <p>No students have registered interest yet.</p>
+                </div>
+            <?php else: ?>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f7fafc; border-bottom: 2px solid #e2e8f0;">
+                            <th style="padding: 12px; text-align: left;">ID</th>
+                            <th style="padding: 12px; text-align: left;">Student Name</th>
+                            <th style="padding: 12px; text-align: left;">Email</th>
+                            <th style="padding: 12px; text-align: left;">Programme</th>
+                            <th style="padding: 12px; text-align: left;">Registered On</th>
+                            <th style="padding: 12px; text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($students as $s): ?>
+                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                            <td style="padding: 12px;"><?php echo $s['InterestID']; ?></td>
+                            <td style="padding: 12px;"><?php echo htmlspecialchars($s['StudentName']); ?></td>
+                            <td style="padding: 12px;"><?php echo htmlspecialchars($s['Email']); ?></td>
+                            <td style="padding: 12px;"><?php echo htmlspecialchars($s['ProgrammeName']); ?></td>
+                            <td style="padding: 12px;"><?php echo date('d M Y, H:i', strtotime($s['RegisteredAt'])); ?></td>
+                            <td style="padding: 12px; text-align: center;">
+                                <a href="index.php?url=admin/interest_delete&id=<?php echo $s['InterestID']; ?>" onclick="return confirm('Are you sure you want to delete this interest?')" style="background: #f56565; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px;">Delete</a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                
+                <div style="margin-top: 20px;">
+                    <p><strong>Total:</strong> <?php echo count($students); ?> interested students</p>
+                </div>
+            <?php endif; ?>
+        </div>
+        
+        <?php
+        $content = ob_get_clean();
+        require_once __DIR__ . '/../views/layout.php';
+    }
+    
+    public function interest_delete() {
+        $id = $_GET['id'] ?? 0;
+        
+        $this->db->prepare("DELETE FROM InterestedStudents WHERE InterestID = ?")->execute([$id]);
+        
+        $_SESSION['success'] = "Interest record deleted successfully!";
+        header('Location: index.php?url=admin/interests');
+        exit;
+    }
+    
+    public function export_csv() {
+        $sql = "SELECT i.StudentName, i.Email, p.ProgrammeName, i.RegisteredAt 
+                FROM InterestedStudents i
+                JOIN Programmes p ON i.ProgrammeID = p.ProgrammeID
+                ORDER BY i.RegisteredAt DESC";
+        $students = $this->db->query($sql)->fetchAll();
+        
+        // Set headers for CSV download
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="interested_students_' . date('Y-m-d') . '.csv"');
+        
+        $output = fopen('php://output', 'w');
+        
+        // Add CSV headers
+        fputcsv($output, ['Student Name', 'Email', 'Programme', 'Registered Date']);
+        
+        // Add data rows
+        foreach($students as $student) {
+            fputcsv($output, [
+                $student['StudentName'],
+                $student['Email'],
+                $student['ProgrammeName'],
+                date('d M Y, H:i', strtotime($student['RegisteredAt']))
+            ]);
+        }
+        
+        fclose($output);
+        exit;
+    }
 }
 ?>
