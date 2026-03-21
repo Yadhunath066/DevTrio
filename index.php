@@ -85,6 +85,28 @@ elseif (strpos($url, 'admin/') === 0) {
         $controller = new AdminController();
         $controller->programme_delete();
     }
+    // ========== MODULE MANAGEMENT ROUTES ==========
+    elseif($admin_page == 'modules') {
+        require_once 'controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->modules();
+    }
+    elseif($admin_page == 'module_add') {
+        require_once 'controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->module_add();
+    }
+    elseif($admin_page == 'module_edit') {
+        require_once 'controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->module_edit();
+    }
+    elseif($admin_page == 'module_delete') {
+        require_once 'controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->module_delete();
+    }
+    // ========== END MODULE MANAGEMENT ==========
     else {
         echo "Admin page not found: " . $admin_page;
     }
