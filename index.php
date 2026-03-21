@@ -30,7 +30,7 @@ elseif (strpos($url, 'programme/') === 0) {
     $controller = new ProgrammeController();
     $controller->show($id);
 }
-// ========== NEW ADMIN ROUTES ==========
+// ========== ADMIN AUTH ROUTES ==========
 elseif ($url == 'login') {
     echo "<!-- DEBUG: Loading login route -->";
     require_once 'controllers/AuthController.php';
@@ -49,6 +49,7 @@ elseif ($url == 'logout') {
     $controller = new AuthController();
     $controller->logout();
 }
+// ========== ADMIN MANAGEMENT ROUTES ==========
 elseif (strpos($url, 'admin/') === 0) {
     echo "<!-- DEBUG: Loading admin route: " . $url . " -->";
     // Check if logged in
@@ -63,6 +64,29 @@ elseif (strpos($url, 'admin/') === 0) {
         require_once 'controllers/AdminController.php';
         $controller = new AdminController();
         $controller->dashboard();
+    }
+    elseif($admin_page == 'programmes') {
+        require_once 'controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->programmes();
+    }
+    elseif($admin_page == 'programme_add') {
+        require_once 'controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->programme_add();
+    }
+    elseif($admin_page == 'programme_edit') {
+        require_once 'controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->programme_edit();
+    }
+    elseif($admin_page == 'programme_delete') {
+        require_once 'controllers/AdminController.php';
+        $controller = new AdminController();
+        $controller->programme_delete();
+    }
+    else {
+        echo "Admin page not found: " . $admin_page;
     }
 }
 // ========== END ADMIN ROUTES ==========
