@@ -16,7 +16,7 @@ if ($url == 'home') {
     require_once 'controllers/ProgrammeController.php';
     $controller = new ProgrammeController();
     $controller->home();
-} 
+}
 elseif ($url == 'programmes') {
     echo "<!-- DEBUG: Loading programmes route -->";
     require_once 'controllers/ProgrammeController.php';
@@ -49,13 +49,6 @@ elseif ($url == 'logout') {
     $controller = new AuthController();
     $controller->logout();
 }
-// ========== INTEREST ROUTE ==========
-elseif ($url == 'interest') {
-    echo "<!-- DEBUG: Loading interest route -->";
-    require_once 'controllers/InterestController.php';
-    $controller = new InterestController();
-    $controller->store();
-}
 // ========== ADMIN MANAGEMENT ROUTES ==========
 elseif (strpos($url, 'admin/') === 0) {
     echo "<!-- DEBUG: Loading admin route: " . $url . " -->";
@@ -64,9 +57,9 @@ elseif (strpos($url, 'admin/') === 0) {
         header('Location: index.php?url=login');
         exit;
     }
-    
+   
     $admin_page = str_replace('admin/', '', $url);
-    
+   
     if($admin_page == 'dashboard') {
         require_once 'controllers/AdminController.php';
         $controller = new AdminController();
@@ -92,6 +85,7 @@ elseif (strpos($url, 'admin/') === 0) {
         $controller = new AdminController();
         $controller->programme_delete();
     }
+    // ========== MODULE MANAGEMENT ROUTES ==========
     elseif($admin_page == 'modules') {
         require_once 'controllers/AdminController.php';
         $controller = new AdminController();
@@ -112,6 +106,7 @@ elseif (strpos($url, 'admin/') === 0) {
         $controller = new AdminController();
         $controller->module_delete();
     }
+    // ========== INTERESTED STUDENTS ROUTES ==========
     elseif($admin_page == 'interests') {
         require_once 'controllers/AdminController.php';
         $controller = new AdminController();
@@ -127,11 +122,19 @@ elseif (strpos($url, 'admin/') === 0) {
         $controller = new AdminController();
         $controller->export_csv();
     }
+    // ========== END ADMIN ROUTES ==========
     else {
         echo "Admin page not found: " . $admin_page;
     }
 }
-// ========== END ROUTES ==========
+// ========== INTEREST REGISTRATION ROUTE ==========
+elseif ($url == 'interest') {
+    echo "<!-- DEBUG: Loading interest route -->";
+    require_once 'controllers/InterestController.php';
+    $controller = new InterestController();
+    $controller->store();
+}
+// ========== END INTEREST ROUTE ==========
 else {
     echo "<!-- DEBUG: 404 route -->";
     ob_start();
@@ -146,3 +149,4 @@ else {
     $content = ob_get_clean();
     require 'views/layout.php';
 }
+?>
