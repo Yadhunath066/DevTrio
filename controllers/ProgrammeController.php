@@ -9,7 +9,7 @@ require_once __DIR__ . '/../models/Programme.php';
 class ProgrammeController {
     private $programmeModel;
     
-       public function __construct() {
+    public function __construct() {
         $this->programmeModel = new Programme();
     }
     
@@ -29,7 +29,7 @@ class ProgrammeController {
             <a href="index.php?url=programmes" style="display: inline-block; background: white; color: #667eea; padding: 16px 45px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">Browse All Programmes →</a>
         </div>
         
-        <h2 style="color: #2d3748; margin-bottom: 30px; font-size: 2.2rem; border-bottom: 3px solid #667eea; padding-bottom: 15px;"> Featured Programmes</h2>
+        <h2 style="color: #2d3748; margin-bottom: 30px; font-size: 2.2rem; border-bottom: 3px solid #667eea; padding-bottom: 15px;">Featured Programmes</h2>
         
         <div class="programme-grid">
             <?php foreach($featured as $prog): ?>
@@ -50,23 +50,39 @@ class ProgrammeController {
         $content = ob_get_clean();
         require_once __DIR__ . '/../views/layout.php';
     }
-         
     
-    // Show all programmes (homepage)
+    // SHOW ALL PROGRAMMES with FILTER and SEARCH
     public function programmes() {
-        if(isset($_GET['search']) && !empty($_GET['search'])){
-    $keyword = $_GET['search'];
-    $programmes = $this->programmeModel->search($keyword);
-} else {
-    $programmes = $this->programmeModel->getAll();
-}
+        // Get all programmes
+        $allProgrammes = $this->programmeModel->getAll();
         
+        // Get filter and search from URL
+        $filter = $_GET['filter'] ?? 'all';
+        $search = $_GET['search'] ?? '';
         
-        // Separate by level
+        // Apply filter (UG/PG)
+        if ($filter == 'ug') {
+            $allProgrammes = array_filter($allProgrammes, function($p) {
+                return $p['LevelName'] == 'Undergraduate';
+            });
+        } elseif ($filter == 'pg') {
+            $allProgrammes = array_filter($allProgrammes, function($p) {
+                return $p['LevelName'] == 'Postgraduate';
+            });
+        }
+        
+        // Apply search
+        if (!empty($search)) {
+            $allProgrammes = array_filter($allProgrammes, function($p) use ($search) {
+                return stripos($p['ProgrammeName'], $search) !== false || 
+                       stripos($p['Description'], $search) !== false;
+            });
+        }
+        
+        // Separate by level for display
         $undergraduate = [];
         $postgraduate = [];
-        
-        foreach($programmes as $p) {
+        foreach($allProgrammes as $p) {
             if($p['LevelName'] == 'Undergraduate') {
                 $undergraduate[] = $p;
             } else {
@@ -74,20 +90,40 @@ class ProgrammeController {
             }
         }
         
-        // Start output buffering
         ob_start();
         ?>
         
-        <div class="programme-section">
-            <form method="GET" action="index.php">
-              <input type="hidden" name="url" value="programmes">
-              <input type="text" name="search" placeholder="Search programmes">
-              <button type="submit">Search</button>
+        <!-- Filter and Search Bar -->
+        <div class="filter-search-bar">
+            <div class="filters">
+                <a href="index.php?url=programmes&filter=all" class="filter-btn <?php echo $filter == 'all' ? 'active' : ''; ?>">All</a>
+                <a href="index.php?url=programmes&filter=ug" class="filter-btn <?php echo $filter == 'ug' ? 'active' : ''; ?>">Undergraduate</a>
+                <a href="index.php?url=programmes&filter=pg" class="filter-btn <?php echo $filter == 'pg' ? 'active' : ''; ?>">Postgraduate</a>
+            </div>
+            
+            <form method="GET" class="search-form">
+                <input type="hidden" name="url" value="programmes">
+                <?php if($filter != 'all'): ?>
+                    <input type="hidden" name="filter" value="<?php echo $filter; ?>">
+                <?php endif; ?>
+                <input type="text" name="search" placeholder="Search programmes..." value="<?php echo htmlspecialchars($search); ?>">
+                <button type="submit">🔍 Search</button>
+                <?php if(!empty($search)): ?>
+                    <a href="index.php?url=programmes&filter=<?php echo $filter; ?>" class="clear-btn">Clear</a>
+                <?php endif; ?>
             </form>
+        </div>
+        
+        <!-- Results count -->
+        <div class="results-count">
+            Found <?php echo count($undergraduate) + count($postgraduate); ?> programme(s)
+        </div>
+        
+        <div class="programme-section">
             <h2>Undergraduate Programmes</h2>
             <div class="programme-grid">
                 <?php if(empty($undergraduate)): ?>
-                    <p>No undergraduate programmes available.</p>
+                    <p class="no-results">No undergraduate programmes found.</p>
                 <?php else: ?>
                     <?php foreach($undergraduate as $prog): ?>
                     <div class="programme-card">
@@ -102,7 +138,7 @@ class ProgrammeController {
             <h2>Postgraduate Programmes</h2>
             <div class="programme-grid">
                 <?php if(empty($postgraduate)): ?>
-                    <p>No postgraduate programmes available.</p>
+                    <p class="no-results">No postgraduate programmes found.</p>
                 <?php else: ?>
                     <?php foreach($postgraduate as $prog): ?>
                     <div class="programme-card">
@@ -115,11 +151,125 @@ class ProgrammeController {
             </div>
         </div>
         
-        <?php
-        // Get the buffered content and clean the buffer
-        $content = ob_get_clean();
+        <style>
+            .filter-search-bar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 20px;
+                margin-bottom: 30px;
+                padding: 20px;
+                background: white;
+                border-radius: 15px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            }
+            
+            .filters {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            
+            .filter-btn {
+                padding: 10px 24px;
+                background: #e2e8f0;
+                color: #2d3748;
+                border-radius: 30px;
+                text-decoration: none;
+                transition: all 0.3s;
+                font-weight: 500;
+            }
+            
+            .filter-btn:hover {
+                background: #667eea;
+                color: white;
+                transform: translateY(-2px);
+            }
+            
+            .filter-btn.active {
+                background: #667eea;
+                color: white;
+            }
+            
+            .search-form {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+            
+            .search-form input {
+                padding: 10px 16px;
+                border: 2px solid #e2e8f0;
+                border-radius: 30px;
+                width: 250px;
+                font-size: 1rem;
+            }
+            
+            .search-form input:focus {
+                outline: none;
+                border-color: #667eea;
+            }
+            
+            .search-form button {
+                padding: 10px 24px;
+                background: #667eea;
+                color: white;
+                border: none;
+                border-radius: 30px;
+                cursor: pointer;
+                font-weight: 500;
+            }
+            
+            .search-form button:hover {
+                background: #5a67d8;
+            }
+            
+            .clear-btn {
+                padding: 10px 20px;
+                background: #e2e8f0;
+                color: #2d3748;
+                border-radius: 30px;
+                text-decoration: none;
+            }
+            
+            .results-count {
+                margin-bottom: 20px;
+                color: #718096;
+                font-size: 0.9rem;
+            }
+            
+            .no-results {
+                text-align: center;
+                padding: 40px;
+                color: #718096;
+                background: white;
+                border-radius: 10px;
+            }
+            
+            @media (max-width: 768px) {
+                .filter-search-bar {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+                
+                .filters {
+                    justify-content: center;
+                }
+                
+                .search-form {
+                    justify-content: center;
+                }
+                
+                .search-form input {
+                    width: 100%;
+                }
+            }
+        </style>
         
-        // Include the layout which will display $content
+        <?php
+        $content = ob_get_clean();
         require_once __DIR__ . '/../views/layout.php';
     }
     
@@ -145,7 +295,7 @@ class ProgrammeController {
             'LevelName' => $programmeData['LevelName']
         ];
         
-        // Get modules - FIXED version
+        // Get modules
         $modules = [];
         if(isset($programmeData['modules']) && is_array($programmeData['modules'])) {
             foreach($programmeData['modules'] as $mod) {
@@ -158,7 +308,6 @@ class ProgrammeController {
             }
         }
         
-        // Start output buffering
         ob_start();
         ?>
         
@@ -227,10 +376,7 @@ class ProgrammeController {
         </div>
         
         <?php
-        // Get the buffered content and clean the buffer
         $content = ob_get_clean();
-        
-        // Include the layout which will display $content
         require_once __DIR__ . '/../views/layout.php';
     }
 }

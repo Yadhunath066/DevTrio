@@ -16,7 +16,7 @@ if ($url == 'home') {
     require_once 'controllers/ProgrammeController.php';
     $controller = new ProgrammeController();
     $controller->home();
-} 
+}
 elseif ($url == 'programmes') {
     echo "<!-- DEBUG: Loading programmes route -->";
     require_once 'controllers/ProgrammeController.php';
@@ -57,9 +57,9 @@ elseif (strpos($url, 'admin/') === 0) {
         header('Location: index.php?url=login');
         exit;
     }
-    
+   
     $admin_page = str_replace('admin/', '', $url);
-    
+   
     if($admin_page == 'dashboard') {
         require_once 'controllers/AdminController.php';
         $controller = new AdminController();
@@ -127,7 +127,14 @@ elseif (strpos($url, 'admin/') === 0) {
         echo "Admin page not found: " . $admin_page;
     }
 }
-// ========== END ADMIN ROUTES ==========
+// ========== INTEREST REGISTRATION ROUTE ==========
+elseif ($url == 'interest') {
+    echo "<!-- DEBUG: Loading interest route -->";
+    require_once 'controllers/InterestController.php';
+    $controller = new InterestController();
+    $controller->store();
+}
+// ========== END INTEREST ROUTE ==========
 else {
     echo "<!-- DEBUG: 404 route -->";
     ob_start();
@@ -142,3 +149,4 @@ else {
     $content = ob_get_clean();
     require 'views/layout.php';
 }
+?>
