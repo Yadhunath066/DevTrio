@@ -155,6 +155,84 @@
                 width: 100%;
             }
         }
+        
+        /* Dropdown styling for login */
+        .login-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .login-btn {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 30px;
+            margin-left: 10px;
+        }
+        
+        .login-dropdown-content {
+            display: none;
+            position: absolute;
+            background: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .login-dropdown-content a {
+            color: #2d3748;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background 0.3s;
+        }
+        
+        .login-dropdown-content a:hover {
+            background: #f7fafc;
+            color: #667eea;
+        }
+        
+        .login-dropdown:hover .login-dropdown-content {
+            display: block;
+        }
+        
+        /* Separate login buttons for mobile */
+        .login-links {
+            display: inline-block;
+        }
+        
+        .login-link {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 30px;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .login-links {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 10px;
+            }
+            
+            .login-link {
+                display: inline-block;
+                text-align: center;
+                margin-left: 0;
+            }
+            
+            .login-dropdown {
+                display: none;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .login-links {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -167,7 +245,21 @@
             <nav>
                 <a href="/DevTrio/index.php?url=home">Home</a>
                 <a href="/DevTrio/index.php?url=programmes">Programmes</a>
-                <a href="/DevTrio/index.php?url=login">Admin Login</a>
+                
+                <!-- Dropdown for desktop -->
+                <div class="login-dropdown">
+                    <a href="#" class="login-btn">Login ▼</a>
+                    <div class="login-dropdown-content">
+                        <a href="/DevTrio/index.php?url=admin/login">🔐 Admin Login</a>
+                        <a href="/DevTrio/index.php?url=staff/login">👨‍🏫 Staff Login</a>
+                    </div>
+                </div>
+                
+                <!-- Separate buttons for mobile -->
+                <div class="login-links">
+                    <a href="/DevTrio/index.php?url=admin/login" class="login-link">🔐 Admin Login</a>
+                    <a href="/DevTrio/index.php?url=staff/login" class="login-link">👨‍🏫 Staff Login</a>
+                </div>
             </nav>
         </div>
     </header>

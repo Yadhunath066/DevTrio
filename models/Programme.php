@@ -89,5 +89,19 @@ class Programme {
         $stmt->execute([$level]);
         return $stmt->fetchAll();
     }
+    
+    // Get programmes that contain a specific module (for staff dashboard)
+    public function getByModuleId($module_id) {
+        $sql = "SELECT p.ProgrammeID, p.ProgrammeName, p.Description, l.LevelName, pm.Year
+                FROM Programmes p
+                JOIN Levels l ON p.LevelID = l.LevelID
+                JOIN ProgrammeModules pm ON p.ProgrammeID = pm.ProgrammeID
+                WHERE pm.ModuleID = ?
+                ORDER BY pm.Year, p.ProgrammeName";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$module_id]);
+        return $stmt->fetchAll();
+    }
 }
 ?>
