@@ -4,327 +4,163 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Course Hub</title>
+    <link rel="stylesheet" href="/DevTrio/css/style.css">
     <style>
-        /* RESET & BASE STYLES */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* HEADER STYLES */
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        header h1 {
-            margin: 0;
-            font-size: 2rem;
-            font-weight: 600;
-        }
-        
-        nav {
-            margin-top: 15px;
-        }
-        
-        nav a {
-            color: white;
-            margin-right: 25px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: opacity 0.3s;
-        }
-        
-        nav a:hover {
-            opacity: 0.8;
-            text-decoration: underline;
-        }
-        
-        /* MAIN CONTENT */
-        main {
-            min-height: 500px;
-            padding: 40px 0;
-        }
-        
-        /* FOOTER STYLES */
-        footer {
-            background: #2d3748;
-            color: white;
-            padding: 30px 0;
-            margin-top: 50px;
-            text-align: center;
-        }
-        
-        /* PROGRAMME GRID */
-        .programme-section {
-            margin-bottom: 50px;
-        }
-        
-        .programme-section h2 {
-            color: #2d3748;
-            margin-bottom: 25px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #667eea;
-            font-size: 1.8rem;
-        }
-        
-        .programme-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            margin: 20px 0 40px;
-        }
-        
-        .programme-card {
-            background: white;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid #e2e8f0;
-        }
-        
-        .programme-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
-        }
-        
-        .programme-card h3 {
-            color: #2d3748;
-            margin-bottom: 15px;
-            font-size: 1.4rem;
-        }
-        
-        .programme-card p {
-            color: #4a5568;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-        
-        /* BUTTON STYLES */
-        .btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
-        
-        .btn:hover {
-            opacity: 0.9;
-        }
-        
-        /* PROGRAMME DETAIL PAGE */
-        .programme-detail {
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        .programme-detail h1 {
-            color: #2d3748;
-            margin-bottom: 10px;
-            font-size: 2.2rem;
-        }
-        
-        .programme-detail .level {
-            color: #667eea;
-            font-weight: 600;
-            margin-bottom: 25px;
-            font-size: 1.1rem;
-        }
-        
-        .description {
-            margin-bottom: 40px;
-        }
-        
-        .description h2 {
-            color: #2d3748;
-            margin-bottom: 15px;
-            font-size: 1.6rem;
-        }
-        
-        .description p {
-            color: #4a5568;
-            line-height: 1.8;
-        }
-        
-        /* MODULES SECTION */
-        .modules h2 {
-            color: #2d3748;
-            margin-bottom: 25px;
-            font-size: 1.6rem;
-        }
-        
-        .year-group {
+        /* Additional styles for filter bar and search */
+        .filter-bar {
+            display: flex;
+            gap: 10px;
             margin-bottom: 30px;
+            flex-wrap: wrap;
         }
         
-        .year-group h3 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .filter-btn {
+            padding: 10px 24px;
+            background: #e2e8f0;
+            color: #2d3748;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .filter-btn:hover {
+            background: #667eea;
             color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 1.3rem;
+            transform: translateY(-2px);
         }
         
-        .module-card {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 0 8px 8px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
         }
         
-        .module-card h4 {
-            color: #2d3748;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
+        .search-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
         
-        .module-card p {
-            color: #4a5568;
-            margin-bottom: 10px;
-        }
-        
-        .module-leader {
-            color: #667eea;
-            font-style: italic;
-            margin-top: 10px;
-            font-weight: 500;
-        }
-        
-        /* INTEREST FORM */
-        .interest-form {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 10px;
-            margin-top: 40px;
-            border: 1px solid #e2e8f0;
-        }
-        
-        .interest-form h2 {
-            color: #2d3748;
-            margin-bottom: 25px;
-            font-size: 1.6rem;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #4a5568;
-            font-weight: 500;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px;
+        .search-form input {
+            padding: 10px 16px;
             border: 2px solid #e2e8f0;
-            border-radius: 6px;
+            border-radius: 30px;
+            width: 300px;
             font-size: 1rem;
             transition: border-color 0.3s;
         }
         
-        .form-group input:focus {
+        .search-form input:focus {
             outline: none;
             border-color: #667eea;
         }
         
-        .interest-form .btn {
-            width: 100%;
-            padding: 14px;
-            font-size: 1.1rem;
+        .search-form button {
+            padding: 10px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
         }
         
-        /* RESPONSIVE DESIGN */
+        .search-form button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        /* Error message styling */
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        input.error {
+            border-color: #e53e3e;
+        }
+        
+        .success-message {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        /* Skip to content link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 100;
+        }
+        
+        .skip-link:focus {
+            top: 0;
+        }
+        
+        /* Button hover effects */
+        .btn {
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Card hover effect */
+        .programme-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .programme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        /* Module card hover */
+        .module-card {
+            transition: transform 0.3s;
+        }
+        
+        .module-card:hover {
+            transform: translateX(5px);
+        }
+        
+        /* Mobile responsive enhancements */
         @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.5rem;
+            .filter-bar {
+                justify-content: center;
             }
             
-            nav a {
-                margin-right: 15px;
-                font-size: 0.9rem;
+            .search-form {
+                flex-direction: column;
             }
             
-            .programme-grid {
-                grid-template-columns: 1fr;
+            .search-form input {
+                width: 100%;
             }
             
-            .programme-detail {
-                padding: 20px;
+            .search-form button {
+                width: 100%;
             }
-            
-            .programme-detail h1 {
-                font-size: 1.8rem;
-            }
-            
-            .year-group h3 {
-                font-size: 1.1rem;
-            }
-            
-            .module-card {
-                padding: 15px;
-            }
-        }
-        
-        /* SMALLER MOBILE DEVICES */
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 15px;
-            }
-            
-            .programme-card {
-                padding: 20px;
-            }
-            
-            .interest-form {
-                padding: 20px;
-            }
-        }
-        
-        /* ACCESSIBILITY - FOCUS INDICATORS */
-        a:focus, button:focus, input:focus {
-            outline: 3px solid #667eea;
-            outline-offset: 2px;
-        }
-        
-        /* KEYBOARD NAVIGATION */
-        a:focus-visible, button:focus-visible {
-            outline: 3px solid #667eea;
-            outline-offset: 2px;
         }
     </style>
 </head>
 <body>
+    <!-- Skip to content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <header>
         <div class="container">
             <h1>Student Course Hub</h1>
@@ -336,7 +172,7 @@
         </div>
     </header>
     
-    <main class="container">
+    <main id="main-content" class="container">
         <?php echo $content; ?>
     </main>
     
@@ -346,5 +182,8 @@
             <p>Developed by DevTrio Team</p>
         </div>
     </footer>
+    
+    <!-- JavaScript Validation -->
+    <script src="/DevTrio/js/validation.js"></script>
 </body>
 </html>
