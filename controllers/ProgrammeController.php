@@ -29,7 +29,7 @@ class ProgrammeController {
             <a href="index.php?url=programmes" style="display: inline-block; background: white; color: #667eea; padding: 16px 45px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">Browse All Programmes →</a>
         </div>
         
-        <h2 style="color: #2d3748; margin-bottom: 30px; font-size: 2.2rem; border-bottom: 3px solid #667eea; padding-bottom: 15px;">🌟 Featured Programmes</h2>
+        <h2 style="color: #2d3748; margin-bottom: 30px; font-size: 2.2rem; border-bottom: 3px solid #667eea; padding-bottom: 15px;"> Featured Programmes</h2>
         
         <div class="programme-grid">
             <?php foreach($featured as $prog): ?>
