@@ -83,5 +83,17 @@ class Module {
         $this->db->prepare("DELETE FROM Modules WHERE ModuleID = ?")->execute([$id]);
         return true;
     }
+    
+    // Get modules by staff ID (for staff dashboard)
+    public function getByStaffId($staff_id) {
+        $sql = "SELECT m.*, s.Name as ModuleLeaderName
+                FROM Modules m
+                LEFT JOIN Staff s ON m.ModuleLeaderID = s.StaffID
+                WHERE m.ModuleLeaderID = ?
+                ORDER BY m.ModuleName";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$staff_id]);
+        return $stmt->fetchAll();
+    }
 }
 ?>

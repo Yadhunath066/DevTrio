@@ -30,18 +30,31 @@ elseif (strpos($url, 'programme/') === 0) {
     $controller = new ProgrammeController();
     $controller->show($id);
 }
-// ========== ADMIN AUTH ROUTES ==========
-elseif ($url == 'login') {
-    echo "<!-- DEBUG: Loading login route -->";
+
+// ========== SEPARATE LOGIN PAGES ==========
+elseif ($url == 'admin/login') {
+    echo "<!-- DEBUG: Loading admin login route -->";
     require_once 'controllers/AuthController.php';
     $controller = new AuthController();
-    $controller->login();
+    $controller->adminLogin();
 }
-elseif ($url == 'authenticate') {
-    echo "<!-- DEBUG: Processing authenticate route -->";
+elseif ($url == 'staff/login') {
+    echo "<!-- DEBUG: Loading staff login route -->";
     require_once 'controllers/AuthController.php';
     $controller = new AuthController();
-    $controller->authenticate();
+    $controller->staffLogin();
+}
+elseif ($url == 'admin/authenticate') {
+    echo "<!-- DEBUG: Processing admin authenticate route -->";
+    require_once 'controllers/AuthController.php';
+    $controller = new AuthController();
+    $controller->adminAuthenticate();
+}
+elseif ($url == 'staff/authenticate') {
+    echo "<!-- DEBUG: Processing staff authenticate route -->";
+    require_once 'controllers/AuthController.php';
+    $controller = new AuthController();
+    $controller->staffAuthenticate();
 }
 elseif ($url == 'logout') {
     echo "<!-- DEBUG: Processing logout route -->";
@@ -49,12 +62,13 @@ elseif ($url == 'logout') {
     $controller = new AuthController();
     $controller->logout();
 }
+
 // ========== ADMIN MANAGEMENT ROUTES ==========
-elseif (strpos($url, 'admin/') === 0) {
+elseif (strpos($url, 'admin/') === 0 && $url != 'admin/login' && $url != 'admin/authenticate') {
     echo "<!-- DEBUG: Loading admin route: " . $url . " -->";
-    // Check if logged in
-    if(!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-        header('Location: index.php?url=login');
+    // Check if logged in as admin
+    if(!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true || $_SESSION['admin_role'] != 'admin') {
+        header('Location: index.php?url=admin/login');
         exit;
     }
    
@@ -85,7 +99,6 @@ elseif (strpos($url, 'admin/') === 0) {
         $controller = new AdminController();
         $controller->programme_delete();
     }
-    // ========== MODULE MANAGEMENT ROUTES ==========
     elseif($admin_page == 'modules') {
         require_once 'controllers/AdminController.php';
         $controller = new AdminController();
@@ -106,7 +119,6 @@ elseif (strpos($url, 'admin/') === 0) {
         $controller = new AdminController();
         $controller->module_delete();
     }
-    // ========== INTERESTED STUDENTS ROUTES ==========
     elseif($admin_page == 'interests') {
         require_once 'controllers/AdminController.php';
         $controller = new AdminController();
@@ -122,11 +134,30 @@ elseif (strpos($url, 'admin/') === 0) {
         $controller = new AdminController();
         $controller->export_csv();
     }
-    // ========== END ADMIN ROUTES ==========
     else {
         echo "Admin page not found: " . $admin_page;
     }
 }
+
+// ========== STAFF ROUTES ==========
+elseif (strpos($url, 'staff/') === 0 && $url != 'staff/login' && $url != 'staff/authenticate') {
+    echo "<!-- DEBUG: Loading staff route: " . $url . " -->";
+    // Check if logged in as staff
+    if(!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true || $_SESSION['admin_role'] != 'staff') {
+        header('Location: index.php?url=staff/login');
+        exit;
+    }
+    
+    if($url == 'staff/dashboard') {
+        require_once 'controllers/StaffController.php';
+        $controller = new StaffController();
+        $controller->dashboard();
+    }
+    else {
+        echo "Staff page not found";
+    }
+}
+
 // ========== INTEREST REGISTRATION ROUTE ==========
 elseif ($url == 'interest') {
     echo "<!-- DEBUG: Loading interest route -->";
@@ -134,7 +165,8 @@ elseif ($url == 'interest') {
     $controller = new InterestController();
     $controller->store();
 }
-// ========== END INTEREST ROUTE ==========
+
+// ========== 404 PAGE ==========
 else {
     echo "<!-- DEBUG: 404 route -->";
     ob_start();
