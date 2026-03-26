@@ -137,6 +137,81 @@
             transform: translateX(5px);
         }
         
+        /* Header with logo styles - UPDATED */
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .university-logo {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: white;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-text h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #fff 0%, #f0e6ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .tagline {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-top: 5px;
+            letter-spacing: 1px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.9);
+            font-style: italic;
+        }
+        
+        /* Hero Banner Styles */
+        .hero-banner {
+            margin-bottom: 30px;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .banner-image {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        
+        .hero-banner:hover .banner-image {
+            transform: scale(1.02);
+        }
+        
         /* Mobile responsive enhancements */
         @media (max-width: 768px) {
             .filter-bar {
@@ -153,6 +228,68 @@
             
             .search-form button {
                 width: 100%;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .logo-area {
+                justify-content: center;
+            }
+            
+            .university-logo {
+                width: 55px;
+                height: 55px;
+            }
+            
+            .logo-text h1 {
+                font-size: 1.5rem;
+            }
+            
+            .tagline {
+                font-size: 0.7rem;
+            }
+            
+            .banner-image {
+                max-height: 200px;
+            }
+            
+            .hero-banner {
+                border-radius: 10px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .university-logo {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .logo-text h1 {
+                font-size: 1.2rem;
+            }
+            
+            .tagline {
+                font-size: 0.65rem;
+            }
+            
+            .banner-image {
+                max-height: 150px;
+            }
+            
+            .hero-banner {
+                border-radius: 8px;
+                margin-bottom: 15px;
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .banner-image {
+                max-height: 450px;
             }
         }
         
@@ -241,26 +378,37 @@
     
     <header>
         <div class="container">
-            <h1>Student Course Hub</h1>
-            <nav>
-                <a href="/DevTrio/index.php?url=home">Home</a>
-                <a href="/DevTrio/index.php?url=programmes">Programmes</a>
-                
-                <!-- Dropdown for desktop -->
-                <div class="login-dropdown">
-                    <a href="#" class="login-btn">Login ▼</a>
-                    <div class="login-dropdown-content">
-                        <a href="/DevTrio/index.php?url=admin/login">🔐 Admin Login</a>
-                        <a href="/DevTrio/index.php?url=staff/login">👨‍🏫 Staff Login</a>
+            <div class="header-content">
+                <div class="logo-area">
+                    <img src="/DevTrio/images/universitylogo.jpg" 
+                         alt="University Logo" 
+                         class="university-logo">
+                    <div class="logo-text">
+                        <h1>DevTrio University</h1>
+                        <div class="tagline">Your Future Starts Here</div>
                     </div>
                 </div>
-                
-                <!-- Separate buttons for mobile -->
-                <div class="login-links">
-                    <a href="/DevTrio/index.php?url=admin/login" class="login-link">🔐 Admin Login</a>
-                    <a href="/DevTrio/index.php?url=staff/login" class="login-link">👨‍🏫 Staff Login</a>
-                </div>
-            </nav>
+                <nav>
+                    <a href="/DevTrio/index.php?url=home">Home</a>
+                    <a href="/DevTrio/index.php?url=programmes">Programmes</a>
+                    <a href="/DevTrio/index.php?url=about">About Us</a>
+                    
+                    <!-- Dropdown for desktop -->
+                    <div class="login-dropdown">
+                        <a href="#" class="login-btn">Login ▼</a>
+                        <div class="login-dropdown-content">
+                            <a href="/DevTrio/index.php?url=admin/login">Admin Login</a>
+                            <a href="/DevTrio/index.php?url=staff/login">Staff Login</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Separate buttons for mobile -->
+                    <div class="login-links">
+                        <a href="/DevTrio/index.php?url=admin/login" class="login-link">Admin Login</a>
+                        <a href="/DevTrio/index.php?url=staff/login" class="login-link">Staff Login</a>
+                    </div>
+                </nav>
+            </div>
         </div>
     </header>
     
@@ -270,8 +418,8 @@
     
     <footer>
         <div class="container">
-            <p>&copy; 2026 Student Course Hub. All rights reserved.</p>
-            <p>Developed by DevTrio Team</p>
+            <p>&copy; 2026 DevTrio University. All rights reserved.</p>
+            <p>Developed by Team DevTrio WEBTECH 46</p>
         </div>
     </footer>
     
