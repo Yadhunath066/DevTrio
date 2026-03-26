@@ -14,17 +14,17 @@ class AdminController {
     }
     
     public function dashboard() {
-        // Get stats
+        // Get stats - FIXED: changed InterestedStudents to interested_students
         $progCount = $this->db->query("SELECT COUNT(*) FROM Programmes")->fetchColumn();
         $moduleCount = $this->db->query("SELECT COUNT(*) FROM Modules")->fetchColumn();
-        $interestCount = $this->db->query("SELECT COUNT(*) FROM InterestedStudents")->fetchColumn();
+        $interestCount = $this->db->query("SELECT COUNT(*) FROM interested_students")->fetchColumn();
         
         ob_start();
         ?>
         
         <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
             <h1 style="color: #2d3748; margin-bottom: 20px;">Admin Dashboard</h1>
-            <p style="margin-bottom: 30px;">Welcome back, <?php echo htmlspecialchars($_SESSION['admin_username']); ?>!</p>
+            <p style="margin-bottom: 30px;">Welcome back, <?php echo htmlspecialchars($_SESSION['admin_username'] ?? 'Admin'); ?>!</p>
             
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;">
                 <div style="background: #667eea; color: white; padding: 20px; border-radius: 10px; text-align: center;">
@@ -271,8 +271,8 @@ class AdminController {
     public function programme_delete() {
         $id = $_GET['id'] ?? 0;
         
-        // First delete related ProgrammeModules
-        $this->db->prepare("DELETE FROM ProgrammeModules WHERE ProgrammeID = ?")->execute([$id]);
+        // First delete related ProgrammeModules - FIXED: changed to programme_modules
+        $this->db->prepare("DELETE FROM programme_modules WHERE ProgrammeID = ?")->execute([$id]);
         
         // Then delete the programme
         $this->db->prepare("DELETE FROM Programmes WHERE ProgrammeID = ?")->execute([$id]);
@@ -288,9 +288,10 @@ class AdminController {
         $sql = "SELECT m.*, 
                        pm.ProgrammeID,
                        p.ProgrammeName, 
-                       s.Name as StaffName 
+                       s.Name as StaffName,
+                       pm.Year
                 FROM Modules m
-                LEFT JOIN ProgrammeModules pm ON m.ModuleID = pm.ModuleID
+                LEFT JOIN programme_modules pm ON m.ModuleID = pm.ModuleID
                 LEFT JOIN Programmes p ON pm.ProgrammeID = p.ProgrammeID
                 LEFT JOIN Staff s ON m.ModuleLeaderID = s.StaffID
                 GROUP BY m.ModuleID
@@ -354,15 +355,15 @@ class AdminController {
             
             if(!empty($name) && !empty($programmeId)) {
                 // First insert into Modules table
-                $sql = "INSERT INTO Modules (ModuleName, ModuleLeaderID, Description, Year) 
-                        VALUES (?, ?, ?, ?)";
+                $sql = "INSERT INTO Modules (ModuleName, ModuleLeaderID, Description) 
+                        VALUES (?, ?, ?)";
                 $stmt = $this->db->prepare($sql);
-                $stmt->execute([$name, $staffId ?: null, $description, $year]);
+                $stmt->execute([$name, $staffId ?: null, $description]);
                 
                 $newModuleId = $this->db->lastInsertId();
                 
-                // Then add to ProgrammeModules table to link with programme
-                $sql2 = "INSERT INTO ProgrammeModules (ProgrammeID, ModuleID, Year) VALUES (?, ?, ?)";
+                // Then add to programme_modules table to link with programme - FIXED
+                $sql2 = "INSERT INTO programme_modules (ProgrammeID, ModuleID, Year) VALUES (?, ?, ?)";
                 $stmt2 = $this->db->prepare($sql2);
                 $stmt2->execute([$programmeId, $newModuleId, $year]);
                 
@@ -455,13 +456,13 @@ class AdminController {
             
             if(!empty($name) && !empty($programmeId)) {
                 // Update Modules table
-                $sql = "UPDATE Modules SET ModuleName = ?, ModuleLeaderID = ?, Description = ?, Year = ? 
+                $sql = "UPDATE Modules SET ModuleName = ?, ModuleLeaderID = ?, Description = ? 
                         WHERE ModuleID = ?";
                 $stmt = $this->db->prepare($sql);
-                $stmt->execute([$name, $staffId ?: null, $description, $year, $id]);
+                $stmt->execute([$name, $staffId ?: null, $description, $id]);
                 
-                // Update ProgrammeModules table
-                $sql2 = "UPDATE ProgrammeModules SET ProgrammeID = ?, Year = ? WHERE ModuleID = ?";
+                // Update programme_modules table - FIXED
+                $sql2 = "UPDATE programme_modules SET ProgrammeID = ?, Year = ? WHERE ModuleID = ?";
                 $stmt2 = $this->db->prepare($sql2);
                 $stmt2->execute([$programmeId, $year, $id]);
                 
@@ -472,9 +473,9 @@ class AdminController {
         }
         
         // Get module data with its programme
-        $sql = "SELECT m.*, pm.ProgrammeID 
+        $sql = "SELECT m.*, pm.ProgrammeID, pm.Year
                 FROM Modules m
-                LEFT JOIN ProgrammeModules pm ON m.ModuleID = pm.ModuleID
+                LEFT JOIN programme_modules pm ON m.ModuleID = pm.ModuleID
                 WHERE m.ModuleID = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
@@ -554,8 +555,8 @@ class AdminController {
     public function module_delete() {
         $id = $_GET['id'] ?? 0;
         
-        // First delete from ProgrammeModules
-        $this->db->prepare("DELETE FROM ProgrammeModules WHERE ModuleID = ?")->execute([$id]);
+        // First delete from programme_modules - FIXED
+        $this->db->prepare("DELETE FROM programme_modules WHERE ModuleID = ?")->execute([$id]);
         
         // Then delete the module
         $this->db->prepare("DELETE FROM Modules WHERE ModuleID = ?")->execute([$id]);
@@ -569,7 +570,7 @@ class AdminController {
     
     public function interests() {
         $sql = "SELECT i.*, p.ProgrammeName 
-                FROM InterestedStudents i
+                FROM interested_students i
                 JOIN Programmes p ON i.ProgrammeID = p.ProgrammeID
                 ORDER BY i.RegisteredAt DESC";
         $students = $this->db->query($sql)->fetchAll();
@@ -617,7 +618,7 @@ class AdminController {
                             <td style="padding: 12px;"><?php echo htmlspecialchars($s['ProgrammeName']); ?></td>
                             <td style="padding: 12px;"><?php echo date('d M Y, H:i', strtotime($s['RegisteredAt'])); ?></td>
                             <td style="padding: 12px; text-align: center;">
-                                <a href="index.php?url=admin/interest_delete&id=<?php echo $s['InterestID']; ?>" onclick="return confirm('Are you sure you want to delete this interest?')" style="background: #f56565; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px;">Delete</a>
+                                <a href="index.php?url=admin/interest_delete&id=<?php echo $s['InterestID']; ?>" onclick="return confirm('Are you sure?')" style="background: #f56565; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px;">Delete</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -638,7 +639,7 @@ class AdminController {
     public function interest_delete() {
         $id = $_GET['id'] ?? 0;
         
-        $this->db->prepare("DELETE FROM InterestedStudents WHERE InterestID = ?")->execute([$id]);
+        $this->db->prepare("DELETE FROM interested_students WHERE InterestID = ?")->execute([$id]);
         
         $_SESSION['success'] = "Interest record deleted successfully!";
         header('Location: index.php?url=admin/interests');
@@ -647,7 +648,7 @@ class AdminController {
     
     public function export_csv() {
         $sql = "SELECT i.StudentName, i.Email, p.ProgrammeName, i.RegisteredAt 
-                FROM InterestedStudents i
+                FROM interested_students i
                 JOIN Programmes p ON i.ProgrammeID = p.ProgrammeID
                 ORDER BY i.RegisteredAt DESC";
         $students = $this->db->query($sql)->fetchAll();

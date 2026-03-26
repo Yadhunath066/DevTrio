@@ -73,7 +73,8 @@ class InterestController {
         // ========== STEP 3: CHECK FOR DUPLICATE INTEREST ==========
         if (empty($errors)) {
             try {
-                $duplicateSql = "SELECT InterestID FROM InterestedStudents
+                // FIXED: Changed to interested_students (with underscore)
+                $duplicateSql = "SELECT InterestID FROM interested_students
                                  WHERE Email = ? AND ProgrammeID = ?";
                 $duplicateStmt = $this->db->prepare($duplicateSql);
                 $duplicateStmt->execute([$email, $programme_id]);
@@ -89,8 +90,8 @@ class InterestController {
         // ========== STEP 4: IF NO ERRORS, SAVE TO DATABASE ==========
         if (empty($errors)) {
             try {
-                // Using prepared statements to prevent SQL injection
-                $sql = "INSERT INTO InterestedStudents (ProgrammeID, StudentName, Email, RegisteredAt)
+                // FIXED: Changed to interested_students (with underscore)
+                $sql = "INSERT INTO interested_students (ProgrammeID, StudentName, Email, RegisteredAt)
                         VALUES (:programme_id, :name, :email, NOW())";
                 $stmt = $this->db->prepare($sql);
                 $result = $stmt->execute([

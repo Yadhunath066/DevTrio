@@ -53,9 +53,9 @@ class StaffController {
                 <div style="display: grid; gap: 20px;">
                     <?php foreach($modules as $module): ?>
                         <?php
-                        // Get programmes that include this module
+                        // Get programmes that include this module - FIXED: changed to programme_modules
                         $progSql = "SELECT p.ProgrammeName, pm.Year 
-                                    FROM ProgrammeModules pm
+                                    FROM programme_modules pm
                                     JOIN Programmes p ON pm.ProgrammeID = p.ProgrammeID
                                     WHERE pm.ModuleID = :module_id
                                     ORDER BY pm.Year, p.ProgrammeName";
