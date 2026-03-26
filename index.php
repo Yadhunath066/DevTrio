@@ -23,6 +23,13 @@ elseif ($url == 'programmes') {
     $controller = new ProgrammeController();
     $controller->programmes();
 }
+elseif ($url == 'about') {
+    echo "<!-- DEBUG: Loading about route -->";
+    ob_start();
+    require 'views/public/about.php';
+    $content = ob_get_clean();
+    require 'views/layout.php';
+}
 elseif (strpos($url, 'programme/') === 0) {
     echo "<!-- DEBUG: Loading programme detail route with ID: " . $url . " -->";
     $id = str_replace('programme/', '', $url);

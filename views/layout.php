@@ -133,67 +133,133 @@
             transition: transform 0.3s;
         }
         
-        .module-card:hover {
-            transform: translateX(5px);
+        .programme-card p {
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.6;
         }
         
-        /* Mobile responsive enhancements */
-        @media (max-width: 768px) {
-            .filter-bar {
-                justify-content: center;
-            }
-            
-            .search-form {
-                flex-direction: column;
-            }
-            
-            .search-form input {
-                width: 100%;
-            }
-            
-            .search-form button {
-                width: 100%;
-            }
-        }
-        
-        /* Dropdown styling for login */
-        .login-dropdown {
-            position: relative;
+        /* BUTTON STYLES */
+        .btn {
             display: inline-block;
-        }
-        
-        .login-btn {
-            background: rgba(255,255,255,0.2);
-            padding: 8px 16px;
-            border-radius: 30px;
-            margin-left: 10px;
-        }
-        
-        .login-dropdown-content {
-            display: none;
-            position: absolute;
-            background: white;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        
-        .login-dropdown-content a {
-            color: #2d3748;
-            padding: 12px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
             text-decoration: none;
-            display: block;
-            transition: background 0.3s;
+            border-radius: 5px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.3s;
         }
         
-        .login-dropdown-content a:hover {
-            background: #f7fafc;
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* PROGRAMME DETAIL PAGE */
+        .programme-detail {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .programme-detail h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .programme-detail .level {
             color: #667eea;
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
         }
         
-        .login-dropdown:hover .login-dropdown-content {
+        .description {
+            margin-bottom: 40px;
+        }
+        
+        .description h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.6rem;
+        }
+        
+        .description p {
+            color: #4a5568;
+            line-height: 1.8;
+        }
+        
+        /* MODULES SECTION */
+        .modules h2 {
+            color: #2d3748;
+            margin-bottom: 25px;
+            font-size: 1.6rem;
+        }
+        
+        .year-group {
+            margin-bottom: 30px;
+        }
+        
+        .year-group h3 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        
+        .module-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .module-card h4 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .module-card p {
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+        
+        .module-leader {
+            color: #667eea;
+            font-style: italic;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+        
+        /* INTEREST FORM */
+        .interest-form {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 40px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .interest-form h2 {
+            color: #2d3748;
+            margin-bottom: 25px;
+            font-size: 1.6rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
             display: block;
         }
         
@@ -245,21 +311,7 @@
             <nav>
                 <a href="/DevTrio/index.php?url=home">Home</a>
                 <a href="/DevTrio/index.php?url=programmes">Programmes</a>
-                
-                <!-- Dropdown for desktop -->
-                <div class="login-dropdown">
-                    <a href="#" class="login-btn">Login ▼</a>
-                    <div class="login-dropdown-content">
-                        <a href="/DevTrio/index.php?url=admin/login">🔐 Admin Login</a>
-                        <a href="/DevTrio/index.php?url=staff/login">👨‍🏫 Staff Login</a>
-                    </div>
-                </div>
-                
-                <!-- Separate buttons for mobile -->
-                <div class="login-links">
-                    <a href="/DevTrio/index.php?url=admin/login" class="login-link">🔐 Admin Login</a>
-                    <a href="/DevTrio/index.php?url=staff/login" class="login-link">👨‍🏫 Staff Login</a>
-                </div>
+                <a href="/DevTrio/index.php?url=login">Admin Login</a>
             </nav>
         </div>
     </header>
@@ -270,8 +322,8 @@
     
     <footer>
         <div class="container">
-            <p>&copy; 2026 Student Course Hub. All rights reserved.</p>
-            <p>Developed by DevTrio Team</p>
+            <p>&copy; 2026 DevTrio University. All rights reserved.</p>
+            <p>Developed by Team DevTrio WEBTECH 46</p>
         </div>
     </footer>
     

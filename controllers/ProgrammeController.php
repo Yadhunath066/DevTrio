@@ -13,7 +13,7 @@ class ProgrammeController {
         $this->programmeModel = new Programme();
     }
     
-    // HOME PAGE with welcome banner & featured programmes
+    // HOME PAGE with VIDEO HERO & featured programmes
     public function home() {
         $programmes = $this->programmeModel->getAll();
         
@@ -23,10 +23,17 @@ class ProgrammeController {
         ob_start();
         ?>
         
-        <div class="welcome-section" style="text-align: center; margin-bottom: 50px; padding: 60px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
-            <h1 style="font-size: 3.2rem; margin-bottom: 20px; font-weight: 700;">Welcome to Student Course Hub</h1>
-            <p style="font-size: 1.4rem; max-width: 800px; margin: 0 auto 30px; opacity: 0.95; line-height: 1.6;">Discover your perfect programme at our university. Explore undergraduate and postgraduate courses designed for your future.</p>
-            <a href="index.php?url=programmes" style="display: inline-block; background: white; color: #667eea; padding: 16px 45px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">Browse All Programmes →</a>
+        <!-- VIDEO HERO SECTION -->
+        <div class="hero-video-section">
+            <video autoplay muted loop playsinline>
+                <source src="/DevTrio/videos/hero-video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="overlay">
+                <h1>Welcome to Student Course Hub</h1>
+                <p>Discover your perfect programme at our university. Explore undergraduate and postgraduate courses designed for your future.</p>
+                <a href="index.php?url=programmes" class="btn-hero">Browse All Programmes →</a>
+            </div>
         </div>
         
         <h2 style="color: #2d3748; margin-bottom: 30px; font-size: 2.2rem; border-bottom: 3px solid #667eea; padding-bottom: 15px;">Featured Programmes</h2>
@@ -34,16 +41,25 @@ class ProgrammeController {
         <div class="programme-grid">
             <?php foreach($featured as $prog): ?>
             <div class="programme-card">
+                <?php if(!empty($prog['Image'])): ?>
+                    <img src="/DevTrio/<?php echo $prog['Image']; ?>" 
+                         alt="<?php echo htmlspecialchars($prog['ProgrammeName']); ?>"
+                         class="programme-card-img">
+                <?php else: ?>
+                    <div class="programme-card-placeholder">
+                        <?php echo htmlspecialchars($prog['ProgrammeName']); ?>
+                    </div>
+                <?php endif; ?>
                 <h3><?php echo htmlspecialchars($prog['ProgrammeName']); ?></h3>
                 <p><?php echo htmlspecialchars(substr($prog['Description'], 0, 120)) . '...'; ?></p>
-                <p><strong>Level:</strong> <span style="background: #667eea; color: white; padding: 3px 10px; border-radius: 20px;"><?php echo $prog['LevelName']; ?></span></p>
+                <p><strong>Level:</strong> <span class="level-badge"><?php echo $prog['LevelName']; ?></span></p>
                 <a href="index.php?url=programme/<?php echo $prog['ProgrammeID']; ?>" class="btn">View Details →</a>
             </div>
             <?php endforeach; ?>
         </div>
         
-        <div style="text-align: center; margin: 50px 0;">
-            <a href="index.php?url=programmes" class="btn" style="padding: 14px 40px;">View All Programmes →</a>
+        <div class="text-center" style="text-align: center; margin: 50px 0;">
+            <a href="index.php?url=programmes" class="btn btn-large">View All Programmes →</a>
         </div>
         
         <?php
@@ -93,6 +109,15 @@ class ProgrammeController {
         ob_start();
         ?>
         
+        <!-- Programme Page Header Image -->
+        <?php if(file_exists(__DIR__ . '/../images/programmepageheader.jpg')): ?>
+        <div class="programmes-header" style="margin-bottom: 30px;">
+            <img src="/DevTrio/images/programmepageheader.jpg" 
+                 alt="Our Programmes" 
+                 style="width: 100%; height: 300px; object-fit: cover; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        </div>
+        <?php endif; ?>
+        
         <!-- Filter and Search Bar -->
         <div class="filter-search-bar">
             <div class="filters">
@@ -107,7 +132,7 @@ class ProgrammeController {
                     <input type="hidden" name="filter" value="<?php echo $filter; ?>">
                 <?php endif; ?>
                 <input type="text" name="search" placeholder="Search programmes..." value="<?php echo htmlspecialchars($search); ?>">
-                <button type="submit">🔍 Search</button>
+                <button type="submit">Search</button>
                 <?php if(!empty($search)): ?>
                     <a href="index.php?url=programmes&filter=<?php echo $filter; ?>" class="clear-btn">Clear</a>
                 <?php endif; ?>
@@ -119,37 +144,64 @@ class ProgrammeController {
             Found <?php echo count($undergraduate) + count($postgraduate); ?> programme(s)
         </div>
         
+        <!-- UNDERGRADUATE SECTION - ONLY SHOW IF NOT EMPTY -->
+        <?php if(!empty($undergraduate)): ?>
         <div class="programme-section">
             <h2>Undergraduate Programmes</h2>
             <div class="programme-grid">
-                <?php if(empty($undergraduate)): ?>
-                    <p class="no-results">No undergraduate programmes found.</p>
-                <?php else: ?>
-                    <?php foreach($undergraduate as $prog): ?>
-                    <div class="programme-card">
-                        <h3><?php echo htmlspecialchars($prog['ProgrammeName']); ?></h3>
-                        <p><?php echo htmlspecialchars(substr($prog['Description'], 0, 100)) . '...'; ?></p>
-                        <a href="index.php?url=programme/<?php echo $prog['ProgrammeID']; ?>" class="btn">View Details</a>
-                    </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-            
-            <h2>Postgraduate Programmes</h2>
-            <div class="programme-grid">
-                <?php if(empty($postgraduate)): ?>
-                    <p class="no-results">No postgraduate programmes found.</p>
-                <?php else: ?>
-                    <?php foreach($postgraduate as $prog): ?>
-                    <div class="programme-card">
-                        <h3><?php echo htmlspecialchars($prog['ProgrammeName']); ?></h3>
-                        <p><?php echo htmlspecialchars(substr($prog['Description'], 0, 100)) . '...'; ?></p>
-                        <a href="index.php?url=programme/<?php echo $prog['ProgrammeID']; ?>" class="btn">View Details</a>
-                    </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                <?php foreach($undergraduate as $prog): ?>
+                <div class="programme-card">
+                    <?php if(!empty($prog['Image'])): ?>
+                        <img src="/DevTrio/<?php echo $prog['Image']; ?>" 
+                             alt="<?php echo htmlspecialchars($prog['ProgrammeName']); ?>"
+                             class="programme-card-img">
+                    <?php else: ?>
+                        <div class="programme-card-placeholder">
+                            <?php echo htmlspecialchars($prog['ProgrammeName']); ?>
+                        </div>
+                    <?php endif; ?>
+                    <h3><?php echo htmlspecialchars($prog['ProgrammeName']); ?></h3>
+                    <p><?php echo htmlspecialchars(substr($prog['Description'], 0, 100)) . '...'; ?></p>
+                    <a href="index.php?url=programme/<?php echo $prog['ProgrammeID']; ?>" class="btn">View Details</a>
+                </div>
+                <?php endforeach; ?>
             </div>
         </div>
+        <?php endif; ?>
+        
+        <!-- POSTGRADUATE SECTION - ONLY SHOW IF NOT EMPTY -->
+        <?php if(!empty($postgraduate)): ?>
+        <div class="programme-section">
+            <h2>Postgraduate Programmes</h2>
+            <div class="programme-grid">
+                <?php foreach($postgraduate as $prog): ?>
+                <div class="programme-card">
+                    <?php if(!empty($prog['Image'])): ?>
+                        <img src="/DevTrio/<?php echo $prog['Image']; ?>" 
+                             alt="<?php echo htmlspecialchars($prog['ProgrammeName']); ?>"
+                             class="programme-card-img">
+                    <?php else: ?>
+                        <div class="programme-card-placeholder">
+                            <?php echo htmlspecialchars($prog['ProgrammeName']); ?>
+                        </div>
+                    <?php endif; ?>
+                    <h3><?php echo htmlspecialchars($prog['ProgrammeName']); ?></h3>
+                    <p><?php echo htmlspecialchars(substr($prog['Description'], 0, 100)) . '...'; ?></p>
+                    <a href="index.php?url=programme/<?php echo $prog['ProgrammeID']; ?>" class="btn">View Details</a>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+        
+        <!-- Show message if no results at all -->
+        <?php if(empty($undergraduate) && empty($postgraduate)): ?>
+        <div class="no-results" style="text-align: center; padding: 60px;">
+            <h3>No programmes found</h3>
+            <p>Try adjusting your search or filter criteria.</p>
+            <a href="index.php?url=programmes&filter=all" class="btn" style="margin-top: 20px;">Clear Filters</a>
+        </div>
+        <?php endif; ?>
         
         <style>
             .filter-search-bar {
@@ -181,15 +233,10 @@ class ProgrammeController {
                 font-weight: 500;
             }
             
-            .filter-btn:hover {
+            .filter-btn:hover, .filter-btn.active {
                 background: #667eea;
                 color: white;
                 transform: translateY(-2px);
-            }
-            
-            .filter-btn.active {
-                background: #667eea;
-                color: white;
             }
             
             .search-form {
@@ -222,10 +269,6 @@ class ProgrammeController {
                 font-weight: 500;
             }
             
-            .search-form button:hover {
-                background: #5a67d8;
-            }
-            
             .clear-btn {
                 padding: 10px 20px;
                 background: #e2e8f0;
@@ -240,12 +283,12 @@ class ProgrammeController {
                 font-size: 0.9rem;
             }
             
-            .no-results {
-                text-align: center;
-                padding: 40px;
-                color: #718096;
-                background: white;
-                border-radius: 10px;
+            .section-title {
+                color: #2d3748;
+                margin-bottom: 30px;
+                font-size: 2rem;
+                border-bottom: 3px solid #667eea;
+                padding-bottom: 15px;
             }
             
             @media (max-width: 768px) {
@@ -264,6 +307,10 @@ class ProgrammeController {
                 
                 .search-form input {
                     width: 100%;
+                }
+                
+                .programmes-header img {
+                    height: 150px !important;
                 }
             }
         </style>
@@ -338,6 +385,11 @@ class ProgrammeController {
                     ?>
                     
                     <div class="module-card">
+                        <?php if(file_exists(__DIR__ . '/../images/modulecardplaceholder.jpg')): ?>
+                            <img src="/DevTrio/images/modulecardplaceholder.jpg" 
+                                 alt="Module" 
+                                 style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
+                        <?php endif; ?>
                         <h4><?php echo htmlspecialchars($module['name']); ?></h4>
                         <p><?php echo htmlspecialchars($module['description']); ?></p>
                         <p class="module-leader">Module Leader: <?php echo htmlspecialchars($module['leader']); ?></p>
@@ -348,30 +400,32 @@ class ProgrammeController {
                 <?php endif; ?>
             </div>
             
-            <div class="interest-form">
-                <h2>Register Your Interest</h2>
-                <form action="index.php?url=interest" method="POST">
-                    <input type="hidden" name="programme_id" value="<?php echo $programme['ProgrammeID']; ?>">
-                    
-                    <div class="form-group">
-                        <label for="name">Your Name:</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Your Email:</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    
-                    <button type="submit" class="btn">Register Interest</button>
-                </form>
-                <p style="margin-top: 15px; font-style: italic; color: #666;">
-                    Note: Interest registration is currently in demo mode.
-                </p>
+            <div class="interest-form" style="background-image: url('/DevTrio/images/interestform.jpg'); background-size: cover; background-position: center; border-radius: 15px;">
+                <div style="background: rgba(255,255,255,0.95); padding: 30px; border-radius: 15px;">
+                    <h2>Register Your Interest</h2>
+                    <form action="index.php?url=interest" method="POST">
+                        <input type="hidden" name="programme_id" value="<?php echo $programme['ProgrammeID']; ?>">
+                        
+                        <div class="form-group">
+                            <label for="name">Your Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Your Email:</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <button type="submit" class="btn">Register Interest</button>
+                    </form>
+                    <p style="margin-top: 15px; font-style: italic; color: #666;">
+                        Register your interest and we'll send you updates about this programme.
+                    </p>
+                </div>
             </div>
             
             <div style="margin-top: 30px; text-align: center;">
-                <a href="index.php?url=home" class="btn">← Back to All Programmes</a>
+                <a href="index.php?url=programmes" class="btn">← Back to All Programmes</a>
             </div>
         </div>
         
