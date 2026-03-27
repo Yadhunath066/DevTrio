@@ -36,7 +36,7 @@ class ProgrammeController {
             </div>
         </div>
         
-        <h2 class="section-title">Featured Programmes</h2>
+        <h2 style="color: #2d3748; margin-bottom: 30px; font-size: 2.2rem; border-bottom: 3px solid #667eea; padding-bottom: 15px;">Featured Programmes</h2>
         
         <div class="programme-grid">
             <?php foreach($featured as $prog): ?>
@@ -67,7 +67,7 @@ class ProgrammeController {
         require_once __DIR__ . '/../views/layout.php';
     }
     
-    // SHOW ALL PROGRAMMES with FILTER and SEARCH - HIDES EMPTY SECTIONS
+    // SHOW ALL PROGRAMMES with FILTER and SEARCH
     public function programmes() {
         // Get all programmes
         $allProgrammes = $this->programmeModel->getAll();
